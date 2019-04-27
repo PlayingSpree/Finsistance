@@ -61,6 +61,13 @@ namespace GameVar
             this.position = position;
         }
 
+        public Item(Item i)
+        {
+            type = i.type;
+            rotation = i.rotation;
+            position = i.position;
+        }
+
         public const int ItemCount = 4;
         public enum ItemType
         {
@@ -100,7 +107,7 @@ namespace GameVar
                     case ItemType.Drawer:
                         name = "Drawer";
                         price = 3000;
-                        size = new Vector2Int(1, 2);
+                        size = new Vector2Int(1, 1);
                         break;
                 }
                 this.sprite = sprite;
