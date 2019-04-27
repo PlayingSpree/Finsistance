@@ -36,8 +36,12 @@ public class GameScript : MonoBehaviour
                 Vector2Int v = hoveredItem();
                 if (v != Vector2Int.left)
                 {
-                    editItemlastPos = Vector2Int.left;
                     editMovingItem = gridMatrixItem[v.x, v.y];
+                    if (editMovingItem != null)
+                    {
+                        editItemlastPos = editMovingItem.position;
+                        editItemMoved = false;
+                    }
                 }
             }
         }
@@ -46,6 +50,19 @@ public class GameScript : MonoBehaviour
             Vector2Int v = hoveredItem();
             if (v == Vector2Int.left)
             {
+                if(!editItemMoved)
+                {
+                    editMovingItem.rotation += 1;
+                    if ((int)editMovingItem.rotation > 3)
+                    {
+                        editMovingItem.rotation = 0;
+                    }
+
+                    editMovingItem.position = ClampItemPos(editMovingItem.position, editMovingItem);
+
+                    UpdateItems();
+                    GenerateGrid();
+                }
                 editMovingItem = null;
             }
             else
@@ -54,6 +71,7 @@ public class GameScript : MonoBehaviour
                 editMovingItem.position.Set(v.x, v.y);
                 if (editItemlastPos != editMovingItem.position)
                 {
+                    editItemMoved = true;
                     UpdateItems();
                     GenerateGrid();
                 }
@@ -87,24 +105,19 @@ public class GameScript : MonoBehaviour
     int[,] gridMatrix;
     Item[,] gridMatrixItem;
     Item editMovingItem;
-    Item editBoughtItem;
+    public Item.ItemInfo editBoughtItem;
     Vector2Int editItemlastPos = Vector2Int.left;
+    bool editItemMoved = false;
     bool editMode = false;
     bool editInvalidPlacement = false;
     List<Item> editBackup;
 
     public void PressEditButton()
     {
-        editMode = true;
-        editBackup = new List<Item>();
-        foreach (Item item in gameData.placedItems)
-        {
-            editBackup.Add(new Item(item));
-        }
+        EnterEditMode();
 
         mainScene.UIanimator.SetTrigger("Change");
         mainScene.UIanimator.SetInteger("NextUI", 1);
-        GenerateGrid();
     }
 
     void GenerateGrid()
@@ -181,15 +194,17 @@ public class GameScript : MonoBehaviour
     {
         if (editInvalidPlacement)
         {
-            mainScene.notiText.SetText("FIX INVALID PLACEMENT");
-            mainScene.UIanimator.SetTrigger("NotiShow");
+            mainScene.ShowNoti("FIX INVALID PLACEMENT");
         }
         else
         {
-            editMode = false;
-            mainScene.UIanimator.SetTrigger("Change");
-            mainScene.UIanimator.SetInteger("NextUI", 0);
-            RemoveAllObjectFromList(gridObject);
+            if (editBoughtItem != null)
+            {
+                mainScene.ShowNoti("ITEM BOUGHT", Color.green,new Color(0.815f, 1f, 0.815f, 0.815f));
+                gameData.token -= editBoughtItem.price;
+                UpdateUI();
+            }
+            QuitEditMode();
         }
     }
 
@@ -197,7 +212,28 @@ public class GameScript : MonoBehaviour
     {
         gameData.placedItems = editBackup;
         UpdateItems();
+        QuitEditMode();
+    }
 
+    public void EnterEditMode()
+    {
+        editMode = true;
+        editBackup = new List<Item>();
+        foreach (Item item in gameData.placedItems)
+        {
+            editBackup.Add(new Item(item));
+        }
+        if (editBoughtItem != null)
+        {
+            gameData.placedItems.Add(new Item(editBoughtItem));
+        }
+        UpdateItems();
+        GenerateGrid();
+    }
+
+    void QuitEditMode()
+    {
+        editBoughtItem = null;
         editMode = false;
         mainScene.UIanimator.SetTrigger("Change");
         mainScene.UIanimator.SetInteger("NextUI", 0);
@@ -265,7 +301,7 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    void RemoveAllObjectFromList(List<GameObject> list)
+    public void RemoveAllObjectFromList(List<GameObject> list)
     {
         foreach (GameObject item in list)
         {

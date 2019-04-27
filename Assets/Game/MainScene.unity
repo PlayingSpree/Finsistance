@@ -4701,6 +4701,7 @@ MonoBehaviour:
   UIanimator: {fileID: 284336265}
   token: {fileID: 1944841509}
   notiText: {fileID: 1004611564}
+  notiBG: {fileID: 1270664009}
 --- !u!114 &1962444758
 MonoBehaviour:
   m_ObjectHideFlags: 0

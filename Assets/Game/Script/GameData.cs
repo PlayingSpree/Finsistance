@@ -68,6 +68,13 @@ namespace GameVar
             position = i.position;
         }
 
+        public Item(ItemInfo editBoughtItem)
+        {
+            type = editBoughtItem.itemType;
+            rotation = Rotation.LeftDown;
+            position = Vector2Int.zero;
+        }
+
         public const int ItemCount = 4;
         public enum ItemType
         {
@@ -110,12 +117,14 @@ namespace GameVar
                         size = new Vector2Int(1, 1);
                         break;
                 }
+                itemType = type;
                 this.sprite = sprite;
             }
             public Vector2Int size;
             public int price;
             public string name;
             public Sprite sprite;
+            public ItemType itemType;
         }
     }
 }

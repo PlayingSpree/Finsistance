@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainSceneController : MonoBehaviour
 {
@@ -11,4 +12,18 @@ public class MainSceneController : MonoBehaviour
     public TextNumberEffect token;
 
     public TMPro.TMP_Text notiText;
+    public Image notiBG;
+
+    public void ShowNoti(string text)
+    {
+        ShowNoti(text, Color.red, new Color(1f, 0.815f, 0.815f, 0.815f));
+    }
+
+    public void ShowNoti(string text, Color color, Color colorBG)
+    {
+        notiBG.color = colorBG;
+        notiText.color = color;
+        notiText.SetText(text);
+        UIanimator.SetTrigger("NotiShow");
+    }
 }

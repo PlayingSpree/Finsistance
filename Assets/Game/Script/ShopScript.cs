@@ -11,17 +11,22 @@ public class ShopScript : MonoBehaviour
     public GameObject shopPanelPrefab;
     public GameScript gameScript;
 
+    //Shop
+    public List<GameObject> shopItemPanel;
+
     //Confirm
     public GameObject confirmPanel;
     public Transform confirmPanel_ItemPanel;
     GameObject itemPanelObject;
     public TMP_Text afterToken;
+    Item.ItemInfo buyingItem;
 
-    void Start()
+    void UpdatePanel()
     {
+        gameScript.RemoveAllObjectFromList(shopItemPanel);
         foreach (Item.ItemInfo item in gameScript.gameData.itemInfo)
         {
-            CreateShopItemPanel(item, shopListParent);
+            shopItemPanel.Add(CreateShopItemPanel(item, shopListParent));
         }
     }
 
@@ -48,6 +53,7 @@ public class ShopScript : MonoBehaviour
     //Shop
     public void PressShopButton()
     {
+        UpdatePanel();
         gameScript.mainScene.UIanimator.SetTrigger("Change");
         gameScript.mainScene.UIanimator.SetInteger("NextUI", 2);
     }
@@ -62,6 +68,7 @@ public class ShopScript : MonoBehaviour
     {
         if ((gameScript.gameData.token - itemInfo.price) >= 0)
         {
+            buyingItem = itemInfo;
             afterToken.SetText((gameScript.gameData.token - itemInfo.price).ToString());
             if (itemPanelObject != null)
             {
@@ -72,13 +79,15 @@ public class ShopScript : MonoBehaviour
         }
         else
         {
-            gameScript.mainScene.notiText.SetText("NOT ENOUGH TOKEN");
-            gameScript.mainScene.UIanimator.SetTrigger("NotiShow");
+            gameScript.mainScene.ShowNoti("NOT ENOUGH TOKEN");
         }
     }
 
     public void PressShopBuyButton()
     {
-
+        gameScript.editBoughtItem = buyingItem;
+        gameScript.EnterEditMode();
+        gameScript.mainScene.UIanimator.SetTrigger("Change");
+        gameScript.mainScene.UIanimator.SetInteger("NextUI", 1);
     }
 }
