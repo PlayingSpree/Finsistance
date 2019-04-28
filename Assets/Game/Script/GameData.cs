@@ -93,12 +93,24 @@ namespace GameVar
             position = Vector2Int.zero;
         }
 
-        public const int ItemCount = 4;
+        public const int ItemCount = 16;
         public enum ItemType
         {
             Bed1,
             Bed2,
             Bed3,
+            Bed1c1,
+            Bed2c1,
+            Bed3c1,
+            Bed1c2,
+            Bed2c2,
+            Bed3c2,
+            Bed1c3,
+            Bed2c3,
+            Bed3c3,
+            Bed1c4,
+            Bed2c4,
+            Bed3c4,
             Drawer
         }
         public ItemType type;
@@ -115,16 +127,28 @@ namespace GameVar
                 switch (type)
                 {
                     case ItemType.Bed1:
+                    case ItemType.Bed1c1:
+                    case ItemType.Bed1c2:
+                    case ItemType.Bed1c3:
+                    case ItemType.Bed1c4:
                         name = "Bed 1";
                         price = 1000;
                         size = new Vector2Int(1, 2);
                         break;
                     case ItemType.Bed2:
+                    case ItemType.Bed2c1:
+                    case ItemType.Bed2c2:
+                    case ItemType.Bed2c3:
+                    case ItemType.Bed2c4:
                         name = "Bed 2";
                         price = 10000;
                         size = new Vector2Int(1, 2);
                         break;
                     case ItemType.Bed3:
+                    case ItemType.Bed3c1:
+                    case ItemType.Bed3c2:
+                    case ItemType.Bed3c3:
+                    case ItemType.Bed3c4:
                         name = "Bed 3";
                         price = 30000;
                         size = new Vector2Int(1, 2);
