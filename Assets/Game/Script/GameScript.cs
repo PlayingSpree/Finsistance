@@ -11,6 +11,7 @@ public class GameScript : MonoBehaviour
     //Prefab=====
     public GameObject editFloor;
     public GameObject[] itemPrefab;
+    public GameObject shopPanelPrefab;
 
     //Data=====
     public GameData gameData = new GameData();
@@ -29,53 +30,134 @@ public class GameScript : MonoBehaviour
     private void Update()
     {
         //EditMode
-        if (editMovingItem == null)
+        if (editMode)
         {
-            if (editMode)
+            //HoldCheck
+            if (Input.touchCount > 0)
             {
-                Vector2Int v = hoveredItem();
-                if (v != Vector2Int.left)
+                if (holdPos == Vector2.left)
                 {
-                    editMovingItem = gridMatrixItem[v.x, v.y];
-                    if (editMovingItem != null)
-                    {
-                        editItemlastPos = editMovingItem.position;
-                        editItemMoved = false;
-                    }
+                    holdPos = Input.GetTouch(0).position;
                 }
-            }
-        }
-        else
-        {
-            Vector2Int v = hoveredItem();
-            if (v == Vector2Int.left)
-            {
-                if(!editItemMoved)
-                {
-                    editMovingItem.rotation += 1;
-                    if ((int)editMovingItem.rotation > 3)
-                    {
-                        editMovingItem.rotation = 0;
-                    }
-
-                    editMovingItem.position = ClampItemPos(editMovingItem.position, editMovingItem);
-
-                    UpdateItems();
-                    GenerateGrid();
-                }
-                editMovingItem = null;
+                holdTimer += Time.deltaTime;
             }
             else
             {
-                v = ClampItemPos(v, editMovingItem);
-                editMovingItem.position.Set(v.x, v.y);
-                if (editItemlastPos != editMovingItem.position)
+                if (Input.GetMouseButton(0))
                 {
-                    editItemMoved = true;
-                    UpdateItems();
-                    GenerateGrid();
+                    if (holdPos == Vector2.left)
+                    {
+                        holdPos = Input.mousePosition;
+                    }
+                    holdTimer += Time.deltaTime;
                 }
-                editItemlastPos = editMovingItem.position;
+                else
+                {
+                    holdPos = Vector2.left;
+                    holdTimer = 0f;
+                }
+            }
+            if (holdTimer > 1f)
+            {
+                Vector2 v;
+                if (Input.touchCount > 0)
+                {
+                    v = Input.GetTouch(0).position;
+                }
+                else
+                {
+                    v = Input.mousePosition;
+                }
+                if (Vector2.Distance(holdPos, v) < 5f)
+                {
+                    if (editMovingItem != null)
+                    {
+                        if (editBoughtItem == editMovingItem)
+                        {
+                            mainScene.ShowNoti("CANNOT SELL UNBOUGHT ITEM");
+                        }
+                        else
+                        {
+                            //Sell
+                            sellingItem = editMovingItem;
+                            Item.ItemInfo item = gameData.GetItemInfoByType(editMovingItem.type);
+                            sellingItemInfo = item;
+
+                            GameObject g = Instantiate(shopPanelPrefab, confirmPanel_ItemPanel);
+                            ItemPanelScript i = g.GetComponent<ItemPanelScript>();
+                            i.item = item;
+                            i.itemName.text = item.name;
+                            i.itemPrice.text = item.price.ToString();
+                            i.itemPrice.color = Color.black;
+                            i.itemImage.sprite = item.sprite;
+
+                            afterToken.SetText((gameData.token + (item.price / 5)).ToString());
+                            sellPrice.SetText((item.price / 5).ToString());
+                            if (itemPanelObject != null)
+                            {
+                                Destroy(itemPanelObject);
+                            }
+                            itemPanelObject = g;
+                            confirmPanel.SetActive(true);
+                        }
+                    }
+                }
+                holdTimer = float.MinValue;
+            }
+            //MoveItem
+            if (confirmPanel.activeInHierarchy == false)
+            {
+                if (editMovingItem == null)
+                {
+                    Vector2Int v = hoveredItem(false);
+                    if (v != Vector2Int.left)
+                    {
+                        if ((v.x < gridMatrixItem.GetLength(0)) && v.y < (gridMatrixItem.GetLength(1)))
+                            editMovingItem = gridMatrixItem[v.x, v.y];
+                        if (editMovingItem != null)
+                        {
+                            editItemlastPos = editMovingItem.position;
+                            editItemMoved = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Vector2Int v = hoveredItem(true);
+                    if (v == Vector2Int.left)
+                    {
+                        if (!editItemMoved)
+                        {
+                            editMovingItem.rotation += 1;
+                            if ((int)editMovingItem.rotation > 3)
+                            {
+                                editMovingItem.rotation = 0;
+                            }
+
+                            editMovingItem.position = ClampItemPos(editMovingItem.position, editMovingItem);
+
+                            UpdateItems();
+                            GenerateGrid();
+                        }
+                        editMovingItem = null;
+                    }
+                    else
+                    {
+                        v = ClampItemPos(v, editMovingItem);
+                        editMovingItem.position.Set(v.x, v.y);
+                        if (editItemlastPos != editMovingItem.position)
+                        {
+                            editItemMoved = true;
+                            UpdateItems();
+                            GenerateGrid();
+                        }
+                        editItemlastPos = editMovingItem.position;
+                    }
+                }
+            }
+            else
+            {
+                editMovingItem = null;
             }
         }
     }
@@ -105,7 +187,8 @@ public class GameScript : MonoBehaviour
     int[,] gridMatrix;
     Item[,] gridMatrixItem;
     Item editMovingItem;
-    public Item.ItemInfo editBoughtItem;
+    public Item.ItemInfo editBoughtItemInfo;
+    Item editBoughtItem;
     Vector2Int editItemlastPos = Vector2Int.left;
     bool editItemMoved = false;
     bool editMode = false;
@@ -198,13 +281,14 @@ public class GameScript : MonoBehaviour
         }
         else
         {
-            if (editBoughtItem != null)
+            if (editBoughtItemInfo != null)
             {
-                mainScene.ShowNoti("ITEM BOUGHT", Color.green,new Color(0.815f, 1f, 0.815f, 0.815f));
-                gameData.token -= editBoughtItem.price;
+                mainScene.ShowNoti("ITEM BOUGHT", new Color(0f, 0.5f, 0f, 0.5f), new Color(0.815f, 1f, 0.815f, 0.815f));
+                gameData.token -= editBoughtItemInfo.price;
                 UpdateUI();
             }
             QuitEditMode();
+            gameData.SaveGameData();
         }
     }
 
@@ -223,9 +307,10 @@ public class GameScript : MonoBehaviour
         {
             editBackup.Add(new Item(item));
         }
-        if (editBoughtItem != null)
+        if (editBoughtItemInfo != null)
         {
-            gameData.placedItems.Add(new Item(editBoughtItem));
+            editBoughtItem = new Item(editBoughtItemInfo);
+            gameData.placedItems.Add(editBoughtItem);
         }
         UpdateItems();
         GenerateGrid();
@@ -233,11 +318,52 @@ public class GameScript : MonoBehaviour
 
     void QuitEditMode()
     {
+        editBoughtItemInfo = null;
         editBoughtItem = null;
         editMode = false;
         mainScene.UIanimator.SetTrigger("Change");
         mainScene.UIanimator.SetInteger("NextUI", 0);
         RemoveAllObjectFromList(gridObject);
+    }
+
+    //ConfirmSell
+    float holdTimer = 0;
+    Vector2 holdPos;
+    public GameObject confirmPanel;
+    public Transform confirmPanel_ItemPanel;
+    GameObject itemPanelObject;
+    public TMPro.TMP_Text afterToken;
+    public TMPro.TMP_Text sellPrice;
+    Item sellingItem;
+    Item.ItemInfo sellingItemInfo;
+
+    public void PressSellButton()
+    {
+        mainScene.ShowNoti("ITEM SOLD", new Color(0.5f, 0.5f, 0f, 1f), new Color(1f, 1f, 0.815f, 0.815f));
+        gameData.token += sellingItemInfo.price / 5;
+        gameData.placedItems.Remove(sellingItem);
+
+        sellingItem = null;
+        sellingItemInfo = null;
+
+        gameData.SaveGameData();
+        UpdateUI();
+
+        if (editBoughtItem != null)
+        {
+            gameData.placedItems.Remove(editBoughtItem);
+        }
+        editBackup = new List<Item>();
+        foreach (Item item in gameData.placedItems)
+        {
+            editBackup.Add(new Item(item));
+        }
+        if (editBoughtItem != null)
+        {
+            gameData.placedItems.Add(editBoughtItem);
+        }
+        UpdateItems();
+        GenerateGrid();
     }
 
     //Helper=====
@@ -250,24 +376,17 @@ public class GameScript : MonoBehaviour
         return new Vector2((((r - l) + ((gameData.roomInfo.size.x - gameData.roomInfo.size.y) / 2.0f)) / 2.0f) + gameData.roomInfo.offset.x, (((l + r) - ((gameData.roomInfo.size.y + gameData.roomInfo.size.x - 2) / 2.0f)) / 4.0f) + gameData.roomInfo.offset.y);
     }
 
-    Vector2Int hoveredItem()
+    Vector2Int hoveredItem(bool Clamp)
     {
         if (Input.touchCount > 0)
         {
-            if (Input.touchCount > 0)
-            {
-                return ScreenPosToGrid(Input.GetTouch(0).position);
-            }
-            else
-            {
-                return Vector2Int.left;
-            }
+            return ScreenPosToGrid(Input.GetTouch(0).position, Clamp);
         }
         else
         {
             if (Input.GetMouseButton(0))
             {
-                return ScreenPosToGrid(Input.mousePosition);
+                return ScreenPosToGrid(Input.mousePosition, Clamp);
             }
             else
             {
@@ -276,11 +395,11 @@ public class GameScript : MonoBehaviour
         }
     }
 
-    Vector2Int ScreenPosToGrid(Vector2 ScreenPos)
+    Vector2Int ScreenPosToGrid(Vector2 ScreenPos, bool Clamp)
     {
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(ScreenPos);
         worldPos -= gameData.roomInfo.offset;
-        return new Vector2Int(Mathf.Clamp(Mathf.RoundToInt((worldPos.y * 2) - worldPos.x + ((gameData.roomInfo.size.x - 1) / 2)), 0, (int)gameData.roomInfo.size.x - 1), Mathf.Clamp(Mathf.RoundToInt(worldPos.x + (worldPos.y * 2) + ((gameData.roomInfo.size.y - 1) / 2)), 0, (int)gameData.roomInfo.size.y - 1));
+        return new Vector2Int(Mathf.Clamp(Mathf.RoundToInt((worldPos.y * 2) - worldPos.x + ((gameData.roomInfo.size.x - 1) / 2)), 0, (Clamp ? (int)(gameData.roomInfo.size.x - 1) : int.MaxValue)), Mathf.Clamp(Mathf.RoundToInt(worldPos.x + (worldPos.y * 2) + ((gameData.roomInfo.size.y - 1) / 2)), 0, (Clamp ? (int)(gameData.roomInfo.size.y - 1) : int.MaxValue)));
     }
 
     Vector2Int ClampItemPos(Vector2Int pos, Item item)

@@ -13,9 +13,14 @@ public class GameData
             itemInfo.Add(new Item.ItemInfo((Item.ItemType)i, itemSprite[i]));
         }
         roomInfo = new RoomInfo(RoomInfo.RoomType.Apartment5x5);
-        placedItems = new List<Item>() { new Item(Item.ItemType.Bed3, Item.Rotation.RightDown, new Vector2Int(0, 3)), new Item(Item.ItemType.Drawer, Item.Rotation.LeftDown, new Vector2Int(1, 4)) };
+        placedItems = new List<Item>() { new Item(Item.ItemType.Bed1, Item.Rotation.RightDown, new Vector2Int(0, 3)) };
         token = 10000;
         return true;
+    }
+
+    public void SaveGameData()
+    {
+        Debug.Log("Data Saved!");
     }
     //Data
     public List<Item.ItemInfo> itemInfo;
@@ -29,6 +34,19 @@ public class GameData
     {
         Main,
         GameEdit
+    }
+
+    //Util
+    public Item.ItemInfo GetItemInfoByType(Item.ItemType type)
+    {
+        foreach (Item.ItemInfo item in itemInfo)
+        {
+            if(item.itemType == type)
+            {
+                return item;
+            }
+        }
+        return null;
     }
 }
 

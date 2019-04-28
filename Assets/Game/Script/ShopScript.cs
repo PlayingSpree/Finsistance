@@ -85,7 +85,7 @@ public class ShopScript : MonoBehaviour
 
     public void PressShopBuyButton()
     {
-        gameScript.editBoughtItem = buyingItem;
+        gameScript.editBoughtItemInfo = buyingItem;
         gameScript.EnterEditMode();
         gameScript.mainScene.UIanimator.SetTrigger("Change");
         gameScript.mainScene.UIanimator.SetInteger("NextUI", 1);
