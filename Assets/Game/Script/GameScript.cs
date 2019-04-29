@@ -68,7 +68,7 @@ public class GameScript : MonoBehaviour
                 {
                     v = Input.mousePosition;
                 }
-                if (Vector2.Distance(holdPos, v) < 5f)
+                if (Vector2.Distance(holdPos, v) < 12f)
                 {
                     if (editMovingItem != null)
                     {

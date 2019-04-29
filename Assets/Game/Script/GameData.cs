@@ -29,13 +29,6 @@ public class GameData
     public RoomInfo roomInfo;
     public List<Item> placedItems;
 
-    //UI
-    public enum UIenum
-    {
-        Main,
-        GameEdit
-    }
-
     //Util
     public Item.ItemInfo GetItemInfoByType(Item.ItemType type)
     {
