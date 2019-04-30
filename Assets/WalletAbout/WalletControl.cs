@@ -6,7 +6,7 @@ using System;
 
 public class WalletControl : MonoBehaviour
 {
-    public DataToSaveList transactionDataList = new DataToSaveList();
+    public DataToSaveList WalletDataList = new DataToSaveList();
 
     public Transform walletButtonParent;
     public GameObject walletButton;
@@ -24,7 +24,7 @@ public class WalletControl : MonoBehaviour
     private void SaveData()
     {
         string filePath = Path.Combine(Application.persistentDataPath, "WalletData.json");
-        string jsonData = JsonUtility.ToJson(transactionDataList);
+        string jsonData = JsonUtility.ToJson(WalletDataList);
         File.WriteAllText(filePath, jsonData);
     }
     
@@ -32,7 +32,7 @@ public class WalletControl : MonoBehaviour
     {
         string filePath = Path.Combine(Application.persistentDataPath, "WalletData.json");
         string jsonDataLoad = File.ReadAllText(filePath);
-        transactionDataList = JsonUtility.FromJson<DataToSaveList>(jsonDataLoad);
+        WalletDataList = JsonUtility.FromJson<DataToSaveList>(jsonDataLoad);
         Debug.Log("Data loaded\n" + jsonDataLoad);
         UpdateWalletButton();
     }
@@ -44,7 +44,7 @@ public class WalletControl : MonoBehaviour
             Destroy(item);
         }
         walletButtonList.Clear();
-        foreach (WalletData item in transactionDataList.dataList)
+        foreach (WalletData item in WalletDataList.dataList)
         {
             CreateWalletButtonObject(item);
         }
@@ -60,7 +60,7 @@ public class WalletControl : MonoBehaviour
 
     public void AddData(int num,string name,string detail,float amount,DateTime date)
     {
-        transactionDataList.dataList.Add(new WalletData(num,name,detail,amount));
+        WalletDataList.dataList.Add(new WalletData(num,name,detail,amount, WalletDataList.idCount++));
         SaveData();
         UpdateWalletButton();
     }
@@ -82,7 +82,7 @@ public class WalletControl : MonoBehaviour
     
     public void DeleteData(WalletData data)
     {
-        transactionDataList.dataList.Remove(data);
+        WalletDataList.dataList.Remove(data);
         WalletDetail.GetComponent<Canvas>().enabled = false;
         SaveData();
         UpdateWalletButton();
@@ -91,6 +91,7 @@ public class WalletControl : MonoBehaviour
     [System.Serializable]
     public class DataToSaveList
     {
+        public int idCount = 1;
         public List<WalletData> dataList = new List<WalletData>();
     }
     [System.Serializable]
@@ -100,13 +101,15 @@ public class WalletControl : MonoBehaviour
         public string name;
         public string detail;
         public float amount;
+        public int id;
 
-        public WalletData(int type, string name, string detail, float amount)
+        public WalletData(int type, string name, string detail, float amount, int id)
         {
             this.type = type;
             this.name = name;
             this.detail = detail;
             this.amount = amount;
+            this.id = id;
         }
     }
 }
