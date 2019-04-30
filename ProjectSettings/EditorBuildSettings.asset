@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MainScene.unity
     guid: 43c7959aaeef8584ca88f7fdcf3dc633
+  - enabled: 1
+    path: Assets/WalletAbout/aboutapp.unity
+    guid: 21ca2ba24dc4b374780cf855fe8ae4a6
+  - enabled: 1
+    path: Assets/WalletAbout/menu.unity
+    guid: 6fefa24e26fb32d4ab49779a7ad6f74d
+  - enabled: 1
+    path: Assets/WalletAbout/wallet.unity
+    guid: 19c2d3ec32cd3ed49bfbc4ffc19bf610
   m_configObjects: {}

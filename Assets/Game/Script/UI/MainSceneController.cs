@@ -26,4 +26,9 @@ public class MainSceneController : MonoBehaviour
         notiText.SetText(text);
         UIanimator.SetTrigger("NotiShow");
     }
+
+    public void ChangeScene(int scene)
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
+    }
 }

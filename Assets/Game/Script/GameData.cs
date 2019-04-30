@@ -1,27 +1,11 @@
 ﻿using GameVar;
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 
 //Loaded Data=====
 public class GameData
 {
-    public bool LoadGameData(List<Sprite> itemSprite)
-    {
-        itemInfo = new List<Item.ItemInfo>(Item.ItemCount);
-        for (int i = 0; i < Item.ItemCount; i++)
-        {
-            itemInfo.Add(new Item.ItemInfo((Item.ItemType)i, itemSprite[i]));
-        }
-        roomInfo = new RoomInfo(RoomInfo.RoomType.Apartment5x5);
-        placedItems = new List<Item>() { new Item(Item.ItemType.Bed1, Item.Rotation.RightDown, new Vector2Int(0, 3)) };
-        token = 10000;
-        return true;
-    }
-
-    public void SaveGameData()
-    {
-        Debug.Log("Data Saved!");
-    }
     //Data
     public List<Item.ItemInfo> itemInfo;
     //Game
@@ -41,12 +25,56 @@ public class GameData
         }
         return null;
     }
+
+    //Save to file
+    [System.Serializable]
+    class DataToSave
+    {
+        public RoomInfo roomInfo = new RoomInfo(RoomInfo.RoomType.Apartment5x5);
+        public List<Item> placedItems = new List<Item>() { new Item(Item.ItemType.Bed1, Item.Rotation.RightDown, new Vector2Int(0, 3)) };
+        public int token = 10000;
+    }
+    public bool LoadGameData(List<Sprite> itemSprite)
+    {
+        //LoadInfo
+        string filePath = Path.Combine(Application.persistentDataPath, "GameData.json");
+        itemInfo = new List<Item.ItemInfo>(Item.ItemCount);
+        for (int i = 0; i < Item.ItemCount; i++)
+        {
+            itemInfo.Add(new Item.ItemInfo((Item.ItemType)i, itemSprite[i]));
+        }
+        //LoadFile
+        DataToSave data = new DataToSave();
+        if (File.Exists(filePath))
+        {
+            string loadData = File.ReadAllText(filePath);
+            JsonUtility.FromJsonOverwrite(loadData,data);
+        }
+        token = data.token;
+        roomInfo = data.roomInfo;
+        placedItems = data.placedItems;
+        return true;
+    }
+
+    public void SaveGameData()
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, "GameData.json");
+        DataToSave data = new DataToSave();
+        data.token = token;
+        data.roomInfo = roomInfo;
+        data.placedItems = placedItems;
+        string jsonData = JsonUtility.ToJson(data);
+        File.WriteAllText(filePath, jsonData);
+    }
 }
+
+
 
 //Class & Hard-Coded Data=====
 namespace GameVar
 {
     //Game
+    [System.Serializable]
     public class RoomInfo
     {
         public RoomInfo(RoomType roomType)
@@ -63,6 +91,7 @@ namespace GameVar
         public Vector2 size;
         public Vector2 offset;
     }
+    [System.Serializable]
     public class Item
     {
         public Item(ItemType type, Rotation rotation, Vector2Int position)
