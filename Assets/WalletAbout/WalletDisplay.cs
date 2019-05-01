@@ -27,7 +27,7 @@ public class WalletDisplay : MonoBehaviour {
         }
         else
         {
-            typeText.SetText("Card");
+            typeText.SetText("CARD");
         }
     }
 

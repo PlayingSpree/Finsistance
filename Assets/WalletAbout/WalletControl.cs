@@ -33,7 +33,6 @@ public class WalletControl : MonoBehaviour
         string filePath = Path.Combine(Application.persistentDataPath, "WalletData.json");
         string jsonDataLoad = File.ReadAllText(filePath);
         WalletDataList = JsonUtility.FromJson<DataToSaveList>(jsonDataLoad);
-        Debug.Log("Data loaded\n" + jsonDataLoad);
         UpdateWalletButton();
     }
 
