@@ -43,7 +43,7 @@ public class debtscript : MonoBehaviour
 
     public void SaveData()//เซฟดาต้า
     {
-        string filePath = Path.Combine(Application.persistentDataPath, "test1.json"); // Path + File Name
+        string filePath = Path.Combine(Application.persistentDataPath, "DebtData.json"); // Path + File Name
         string jsonData = JsonUtility.ToJson(debt); // Object -> json
         File.WriteAllText(filePath, jsonData); // json -> File
 
@@ -72,7 +72,7 @@ public class debtscript : MonoBehaviour
 
     public void updatedebtlist()
     {
-        string filePath = Path.Combine(Application.persistentDataPath, "test1.json"); // Path + File Name
+        string filePath = Path.Combine(Application.persistentDataPath, "DebtData.json"); // Path + File Name
         if (File.Exists(filePath))
         {
             string loadData = File.ReadAllText(filePath); // File -> json
@@ -109,14 +109,23 @@ public class debtscript : MonoBehaviour
     }
     public void dropdownclickeventdelete(Dropdown change)
     {
-        debt.debtlist.RemoveAt(change.value);
-        SaveData();
-        updatedebtlist();
-        nametext.text = "";
-        costtext.text = "";  
+        if (debt.debtlist.Count > 0)
+        {
+            debt.debtlist.RemoveAt(change.value);
+            SaveData();
+            updatedebtlist();
+            nametext.text = "";
+            costtext.text = "";
+        }
     }
-
-
+    public void dropdownclickeventpaid(Dropdown change)
+    {
+        if (debt.debtlist.Count > 0)
+        {
+            dropdownclickeventdelete(change);
+            GameData.AddToken(100);
+        }
+    }
 
     [System.Serializable]
     public class DebtToSave

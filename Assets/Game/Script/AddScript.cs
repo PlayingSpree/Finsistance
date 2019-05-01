@@ -19,7 +19,7 @@ public class AddScript : MonoBehaviour
     public Button saveButton;
     WalletControl.WalletData selectedWallet;
     WalletControl.DataToSaveList walletDataList;
-    int selectedType;
+    int selectedType = -1;
     bool income = false;
     List<GameObject> typeButtonObject = new List<GameObject>();
     public void Start()
@@ -36,7 +36,31 @@ public class AddScript : MonoBehaviour
     }
     public void PressAddButton()
     {
-        Debug.Log(selectedWallet+ "/"+ selectedType + "/" + float.Parse(inputField.text));
+        //Update Transaction
+        TransactionControl.DataToSaveList transactionDataList = new TransactionControl.DataToSaveList();
+        string filePath = Path.Combine(Application.persistentDataPath, "TransactionData.json");
+        if (File.Exists(filePath))
+        {
+            string jsonDataLoad = File.ReadAllText(filePath);
+            transactionDataList = JsonUtility.FromJson<TransactionControl.DataToSaveList>(jsonDataLoad);
+        }
+
+        transactionDataList.dataList.Add(new TransactionControl.TransactionData(System.DateTime.Now.Ticks, income?0:1, selectedType, float.Parse(inputField.text)));
+
+        string jsonData = JsonUtility.ToJson(transactionDataList);
+        File.WriteAllText(filePath, jsonData);
+        //Update Wallet
+        if (selectedWallet != null) {
+            WalletControl.DataToSaveList walletDataList = new WalletControl.DataToSaveList();
+            filePath = Path.Combine(Application.persistentDataPath, "WalletData.json");
+            string jsonDataLoad = File.ReadAllText(filePath);
+            walletDataList = JsonUtility.FromJson<WalletControl.DataToSaveList>(jsonDataLoad);
+
+            walletDataList.dataList.Find(x => x.id == selectedWallet.id).amount += income ? float.Parse(inputField.text) : -float.Parse(inputField.text);
+
+            jsonData = JsonUtility.ToJson(walletDataList);
+            File.WriteAllText(filePath, jsonData);
+        }
         ClearField();
     }
     public void PressCancleButton()
@@ -57,23 +81,23 @@ public class AddScript : MonoBehaviour
     public void PressIncomeButton()
     {
         income = true;
-        selectedType = 0;
+        selectedType = -1;
         image.color = new Color(0.835f, 1f, 0.835f);
         RemoveAllObjectFromList(typeButtonObject);
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < TransactionDisplay.IncomeTagSize; i++)
         {
-            CreateTypeButton(i.ToString()+"I",i);
+            CreateTypeButton(TransactionDisplay.TagToString(0,i),i);
         }
     }
     public void PressOutcomeButton()
     {
         income = false;
-        selectedType = 0;
+        selectedType = -1;
         image.color = new Color(1f, 0.835f, 0.835f);
         RemoveAllObjectFromList(typeButtonObject);
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < TransactionDisplay.OutcomeTagSize; i++)
         {
-            CreateTypeButton(i.ToString()+"O",i);
+            CreateTypeButton(TransactionDisplay.TagToString(1, i), i);
         }
     }
 

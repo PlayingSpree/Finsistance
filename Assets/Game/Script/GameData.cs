@@ -66,6 +66,20 @@ public class GameData
         string jsonData = JsonUtility.ToJson(data);
         File.WriteAllText(filePath, jsonData);
     }
+
+    public static void AddToken(int token)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, "GameData.json");
+        DataToSave data = new DataToSave();
+        if (File.Exists(filePath))
+        {
+            string loadData = File.ReadAllText(filePath);
+            JsonUtility.FromJsonOverwrite(loadData, data);
+        }
+        data.token += token;
+        string jsonData = JsonUtility.ToJson(data);
+        File.WriteAllText(filePath, jsonData);
+    }
 }
 
 

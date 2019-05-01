@@ -79,7 +79,7 @@ public class alldetail : MonoBehaviour
 
     public void SaveData()//เซฟดาต้า
     {
-        string filePath = Path.Combine(Application.persistentDataPath, "test.json"); // Path + File Name
+        string filePath = Path.Combine(Application.persistentDataPath, "WishlistData.json"); // Path + File Name
         string jsonData = JsonUtility.ToJson(data); // Object -> json
         File.WriteAllText(filePath, jsonData); // json -> File
 
@@ -116,7 +116,7 @@ public class alldetail : MonoBehaviour
 
     }
     public void updatewishlist() {
-        string filePath = Path.Combine(Application.persistentDataPath, "test.json"); // Path + File Name
+        string filePath = Path.Combine(Application.persistentDataPath, "WishlistData.json"); // Path + File Name
         if (File.Exists(filePath))
         {
             string loadData = File.ReadAllText(filePath); // File -> json
@@ -158,9 +158,6 @@ public class alldetail : MonoBehaviour
         showwishlistname.text = data.dataList[change.value].savename;
         showwishlistmoney.text = data.dataList[change.value].savemoney;
         showwishlistdes.text = data.dataList[change.value].savedes;
-        string filePath = Path.Combine(Application.persistentDataPath, "test.json"); // Path + File Name
-        string loadData = File.ReadAllText(filePath); // File -> json
-        data = JsonUtility.FromJson<DataToSave>(loadData); // json -> Object
         //data.dataList[index]
         
         
@@ -168,15 +165,28 @@ public class alldetail : MonoBehaviour
     //-------------------------------------------------------
     public void dropdownclickeventdelete(Dropdown change)
     {
-        data.dataList.RemoveAt(change.value);
-        SaveData();
-        updatewishlist();
-        showwishlistmoney.text = "";
-        showwishlistname.text = "";
-        showwishlistdes.text = "";      
+        if (data.dataList.Count > 0)
+        {
+            data.dataList.RemoveAt(change.value);
+            SaveData();
+            updatewishlist();
+            showwishlistmoney.text = "";
+            showwishlistname.text = "";
+            showwishlistdes.text = "";
+        }
     }
 
-    public void dropdownclickeventedit(Dropdown change) {
+    public void dropdownclickeventcomplete(Dropdown change)
+    {
+        if (data.dataList.Count > 0)
+        {
+            dropdownclickeventdelete(change);
+            GameData.AddToken(50);
+        }
+    }
+    
+
+public void dropdownclickeventedit(Dropdown change) {
         letsave();
         name.text = showwishlistname.text;
         money.text = showwishlistmoney.text;

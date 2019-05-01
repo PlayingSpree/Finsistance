@@ -33,6 +33,7 @@ public class AddWalletSelectButtonScript : MonoBehaviour
             walletType.SetText("Unknown");
         }
         walletBalance.SetText(wallet.amount.ToString("F"));
+        walletBalance.color = wallet.amount > 0? Color.black : Color.red;
     }
 
     public void SelectWallet()

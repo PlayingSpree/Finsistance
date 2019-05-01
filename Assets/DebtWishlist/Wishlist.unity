@@ -4795,8 +4795,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 97.1, y: -140}
-  m_SizeDelta: {x: 83.9, y: 40.5}
+  m_AnchoredPosition: {x: 87.398, y: -140}
+  m_SizeDelta: {x: 64.505, y: 40.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1629274020
 MonoBehaviour:
@@ -4840,7 +4840,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1629274021}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 895368703}
+        m_MethodName: dropdownclickeventcomplete
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1738050947}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Dropdown, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1629274021
@@ -5498,8 +5509,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -98, y: -140}
-  m_SizeDelta: {x: 70.3, y: 40.5}
+  m_AnchoredPosition: {x: -91.225, y: -140}
+  m_SizeDelta: {x: 56.75, y: 40.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1833725178
 MonoBehaviour:

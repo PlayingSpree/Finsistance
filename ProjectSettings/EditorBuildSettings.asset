@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/DebtWishlist/Wishlist.unity
     guid: 98ff1e1042f285845b8f49fb15c5b7b2
+  - enabled: 1
+    path: Assets/Transaction/Transaction.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}
