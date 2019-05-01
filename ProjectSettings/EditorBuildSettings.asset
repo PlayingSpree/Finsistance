@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/WalletAbout/wallet.unity
     guid: 19c2d3ec32cd3ed49bfbc4ffc19bf610
+  - enabled: 1
+    path: Assets/DebtWishlist/debt.unity
+    guid: 422fe8c64e79bce4681c937564cb39a5
+  - enabled: 1
+    path: Assets/DebtWishlist/Wishlist.unity
+    guid: 98ff1e1042f285845b8f49fb15c5b7b2
   m_configObjects: {}
