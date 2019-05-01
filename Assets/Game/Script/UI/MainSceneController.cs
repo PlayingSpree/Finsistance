@@ -29,6 +29,9 @@ public class MainSceneController : MonoBehaviour
 
     public void ChangeScene(int scene)
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
+        if(scene == 1)
+            UnityEngine.SceneManagement.SceneManager.LoadScene("AssistanceScene");
+        else
+            UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
     }
 }

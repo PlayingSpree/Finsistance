@@ -25,12 +25,15 @@ public class AddScript : MonoBehaviour
     public void Start()
     {
         string filePath = Path.Combine(Application.persistentDataPath, "WalletData.json");
-        string jsonDataLoad = File.ReadAllText(filePath);
-        walletDataList = JsonUtility.FromJson<WalletControl.DataToSaveList>(jsonDataLoad);
-        foreach (WalletControl.WalletData item in walletDataList.dataList)
+        if (File.Exists(filePath))
         {
-            AddWalletSelectButtonScript s = Instantiate(walletObject, walletObjectParent).GetComponent<AddWalletSelectButtonScript>();
-            s.SetText(item,this);
+            string jsonDataLoad = File.ReadAllText(filePath);
+            walletDataList = JsonUtility.FromJson<WalletControl.DataToSaveList>(jsonDataLoad);
+            foreach (WalletControl.WalletData item in walletDataList.dataList)
+            {
+                AddWalletSelectButtonScript s = Instantiate(walletObject, walletObjectParent).GetComponent<AddWalletSelectButtonScript>();
+                s.SetText(item, this);
+            }
         }
         ClearField();
     }

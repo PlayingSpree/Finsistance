@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/WalletAbout/aboutapp.unity
     guid: 21ca2ba24dc4b374780cf855fe8ae4a6
   - enabled: 1
-    path: Assets/WalletAbout/menu.unity
+    path: Assets/menu.unity
     guid: 6fefa24e26fb32d4ab49779a7ad6f74d
   - enabled: 1
     path: Assets/WalletAbout/wallet.unity
@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Transaction/Transaction.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Assistance/AssistanceScene.unity
+    guid: b70942a86095733419375de24b40540a
   m_configObjects: {}
